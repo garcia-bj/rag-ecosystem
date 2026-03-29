@@ -1,0 +1,122 @@
+[
+  {
+    "question": "What is retrieval-augmented generation (RAG)?",
+    "answer": "RAG is a technique that combines information retrieval with language model generation. It retrieves relevant documents from a knowledge base and uses them as context for the LLM to produce grounded answers.",
+    "contexts": ["Retrieval-Augmented Generation (RAG) is an AI framework that retrieves relevant documents from an external knowledge base before generating a response, ensuring answers are grounded in verified information."],
+    "ground_truth": "RAG retrieves relevant information from a knowledge base and uses it to ground LLM responses, reducing hallucinations."
+  },
+  {
+    "question": "What are the main components of a hybrid retrieval system?",
+    "answer": "A hybrid retrieval system combines dense vector search (semantic similarity) with sparse BM25 keyword search. Results from both are fused using Reciprocal Rank Fusion (RRF) to produce a final ranked list.",
+    "contexts": ["Hybrid retrieval combines dense vector search using embedding models with sparse BM25 keyword search. Reciprocal Rank Fusion (RRF) merges the ranked lists from both approaches into a single ranking."],
+    "ground_truth": "Hybrid retrieval uses both dense (vector) and sparse (BM25) search, fused with RRF."
+  },
+  {
+    "question": "What is the purpose of Reciprocal Rank Fusion (RRF)?",
+    "answer": "RRF is a rank aggregation method that combines ranked lists from multiple retrieval systems. It assigns scores based on each document's rank position (1/(k + rank)), then sums scores across all lists to produce a final ranking.",
+    "contexts": ["Reciprocal Rank Fusion (RRF) aggregates multiple ranked lists into a single ranking by scoring each document as 1/(k + rank) and summing across systems. It is robust to score scale differences between retrievers."],
+    "ground_truth": "RRF merges multiple ranked lists by scoring documents as 1/(k+rank) and summing those scores."
+  },
+  {
+    "question": "How does semantic caching reduce LLM costs?",
+    "answer": "Semantic caching stores the retrieval result for a query embedding. When a new query is semantically similar to a cached one (cosine similarity above a threshold), the cached result is returned without calling the LLM.",
+    "contexts": ["Semantic caching embeds queries and stores results in a vector cache. On subsequent similar queries, cosine similarity is measured against cached embeddings; if above threshold, the cached answer is returned, skipping retrieval and LLM calls."],
+    "ground_truth": "Semantic caching returns pre-computed answers for semantically similar queries, avoiding LLM calls."
+  },
+  {
+    "question": "What is the role of a circuit breaker in an LLM router?",
+    "answer": "A circuit breaker monitors failures for each LLM provider. After a configurable number of failures it opens, preventing further calls to that provider. After a recovery timeout it enters half-open state, allowing a test call to decide whether to close again.",
+    "contexts": ["A circuit breaker has three states: CLOSED (normal), OPEN (failures exceeded threshold, calls blocked), and HALF_OPEN (recovery probe). It protects downstream services and enables automatic fallback to alternative providers."],
+    "ground_truth": "Circuit breakers stop calling a failed provider and automatically recover after a timeout."
+  },
+  {
+    "question": "What PII types trigger routing to a local Ollama model?",
+    "answer": "Queries containing personal names (PERSON), organisations (ORG), email addresses, or phone numbers are classified as containing PII and routed to the local Ollama model to ensure sensitive data never leaves the premises.",
+    "contexts": ["PII detection uses spaCy NER to identify PERSON and ORG entities, combined with regex patterns for email addresses and phone numbers. When any PII is detected, the query is routed to the local Ollama model to prevent data exfiltration."],
+    "ground_truth": "Queries with PERSON, ORG, email, or phone PII are routed to a local Ollama model."
+  },
+  {
+    "question": "How does the hallucination guard work?",
+    "answer": "The hallucination guard computes cosine similarity between the LLM response embedding and the concatenated context embedding using sentence-transformers. If the score is below 0.65, it retries once with a more restrictive prompt that instructs the model to stay strictly within the provided context.",
+    "contexts": ["The hallucination guard uses all-MiniLM-L6-v2 to encode both the LLM response and the context. If cosine similarity is below the faithfulness threshold (0.65), one retry is attempted with a prompt suffix requiring strict context adherence."],
+    "ground_truth": "The guard measures cosine similarity; if below 0.65 it retries with a stricter prompt."
+  },
+  {
+    "question": "What tenant isolation mechanisms are used in the system?",
+    "answer": "Tenant isolation is enforced at multiple layers: PostgreSQL row-level security using app.tenant_id, separate Qdrant collections per tenant, separate Elasticsearch indices per tenant, and separate Neo4j graph namespaces.",
+    "contexts": ["Multi-tenant isolation uses PostgreSQL RLS policies keyed on current_setting('app.tenant_id'), plus dedicated Qdrant collections (rag_{tenant_id}), Elasticsearch indices (rag_{tenant_id}), and Neo4j constraints per tenant."],
+    "ground_truth": "Isolation uses PostgreSQL RLS, per-tenant Qdrant collections, ES indices, and Neo4j namespaces."
+  },
+  {
+    "question": "What are the rate limits for the free plan?",
+    "answer": "The free plan allows 100 queries per day and 10 document ingestion events per month. Exceeding these limits returns HTTP 429 with a descriptive error message.",
+    "contexts": ["Rate limits are enforced per tenant per day (queries) and per month (document ingestion). The free plan allows 100 queries/day and 10 documents/month. Exceeding limits returns a 429 Too Many Requests response with detail 'Daily query limit reached'."],
+    "ground_truth": "Free plan: 100 queries/day, 10 documents/month. Exceeded limits return HTTP 429."
+  },
+  {
+    "question": "How does query expansion improve retrieval recall?",
+    "answer": "Query expansion uses HyDE (hypothetical document embeddings) and multi-query generation to create multiple query variants. All variants are embedded and their vectors averaged before retrieval, increasing the chance of finding relevant chunks.",
+    "contexts": ["Query expansion generates a hypothetical answer document (HyDE) and multiple paraphrased versions of the query. All resulting texts are embedded, the vectors are averaged, and the combined vector is used for retrieval, improving recall."],
+    "ground_truth": "Query expansion creates HyDE and multi-query variants, averages their embeddings for better recall."
+  },
+  {
+    "question": "What is the MCP protocol and how does this system expose it?",
+    "answer": "The Model Context Protocol (MCP) defines a standard interface for AI models to access external tools and resources. This system exposes four MCP tools (search_knowledge, ingest_document, get_ingest_status, get_tenant_stats) via stdio transport for Claude Desktop integration.",
+    "contexts": ["The Model Context Protocol (MCP) standardises how AI assistants call external tools. The RAG system exposes search_knowledge, ingest_document, get_ingest_status, and get_tenant_stats via an MCP server supporting stdio and SSE transports."],
+    "ground_truth": "MCP is a standard AI tool protocol; the system exposes 4 tools via stdio for Claude Desktop."
+  },
+  {
+    "question": "How are JWT tokens validated in the API?",
+    "answer": "JWT tokens are signed with HS256 using a secret key from the JWT_SECRET_KEY environment variable. On each request the bearer token is decoded, expiry is verified, and the tenant_id and role claims are extracted to create a TenantContext.",
+    "contexts": ["JWT tokens use HS256 with a secret key from JWT_SECRET_KEY. The decode_token function validates the signature and expiry. Claims sub (user_id), tenant_id, and role are extracted to build the TenantContext dependency used throughout the API."],
+    "ground_truth": "JWTs are HS256-signed, decoded on each request to extract tenant_id, user_id, and role."
+  },
+  {
+    "question": "What document modalities does the ingestion pipeline support?",
+    "answer": "The ingestion pipeline supports PDF, DOCX, XLSX, Markdown, HTML, plain text, images (PNG/JPEG with EXIF), and audio files (via faster-whisper transcription). Each modality has a dedicated parser and chunker.",
+    "contexts": ["The ingestion pipeline includes parsers for PDF, DOCX, XLSX, Markdown, HTML, TXT, images (with EXIF metadata extraction), and audio (transcribed with faster-whisper). Modality-specific chunkers produce structured chunks with metadata."],
+    "ground_truth": "Supported modalities: PDF, DOCX, XLSX, Markdown, HTML, TXT, images, and audio."
+  },
+  {
+    "question": "How does the LLM tier classification work?",
+    "answer": "Queries are classified into tiers based on token count and complexity. Fewer than 30 tokens use Tier 1 (Claude Haiku). Between 30 and 100 tokens use Tier 2 (GPT-4o-mini). Over 100 tokens or complex reasoning patterns use Tier 3 (GPT-4o). PII queries bypass tiers and use local Ollama.",
+    "contexts": ["Tier classification: < 30 tokens → Tier 1 (claude-haiku-4-5-20251001, cheapest); 30-100 tokens → Tier 2 (gpt-4o-mini); > 100 tokens or regex-matched reasoning keywords → Tier 3 (gpt-4o). PII-flagged queries always route to ollama/llama3."],
+    "ground_truth": "Tiers by token count: <30→Haiku, 30-100→gpt-4o-mini, >100/complex→gpt-4o, PII→Ollama."
+  },
+  {
+    "question": "What is context compression and when is it applied?",
+    "answer": "Context compression reduces retrieved chunks to the most relevant sentences when the total token count exceeds 2000. It ensures the LLM prompt fits within the model's context window while preserving the most important information.",
+    "contexts": ["Context compression activates when retrieved chunks exceed 2000 total tokens. It uses an extractive approach to keep only the most relevant sentences per chunk relative to the query, reducing prompt length while preserving key information."],
+    "ground_truth": "Compression is applied when chunks exceed 2000 tokens, extracting the most relevant sentences."
+  },
+  {
+    "question": "How does the system handle LLM provider failures?",
+    "answer": "Each LLM tier has its own circuit breaker. On failure, the router attempts fallback tiers in order (Tier 3 → Tier 2 → Tier 1). If all tiers fail, the last exception is raised and an error response is returned.",
+    "contexts": ["The LLM router uses per-tier circuit breakers with a configurable failure threshold (default 5) and recovery time (60s). On CircuitBreakerOpen or general exception, the fallback chain tries lower tiers: 3→2→1. If all fail, the exception propagates."],
+    "ground_truth": "Circuit breakers plus a fallback chain (T3→T2→T1) handle provider failures."
+  },
+  {
+    "question": "What Celery queues are used for document processing?",
+    "answer": "Document processing uses four dedicated queues: 'ingest' for ingestion tasks, 'embed' for embedding generation, 'index' for inserting into Qdrant/Elasticsearch/Neo4j, and 'default' for general tasks.",
+    "contexts": ["The Celery configuration defines four queues using a direct exchange named 'rag': 'ingest' (document parsing and chunking), 'embed' (vector embedding), 'index' (inserting into vector/keyword/graph stores), and 'default' (miscellaneous tasks)."],
+    "ground_truth": "Four Celery queues: ingest, embed, index, and default."
+  },
+  {
+    "question": "How are API keys different from JWT tokens in this system?",
+    "answer": "API keys are long-lived credentials stored as SHA-256 hashes in the database. They are passed in the X-API-Key header and resolve to a viewer-role TenantContext. JWT tokens are short-lived (24 hours), bearer-token based, and carry role information directly.",
+    "contexts": ["API keys are SHA-256 hashed and stored in the api_keys table. They are presented via X-API-Key header and always grant viewer role. JWT tokens use HS256, expire after 24 hours, include user_id/tenant_id/role claims, and are passed as Bearer tokens."],
+    "ground_truth": "API keys are long-lived, viewer-only, hashed in DB. JWTs are 24h bearer tokens with role claims."
+  },
+  {
+    "question": "What PostgreSQL extensions or features enable multi-tenancy?",
+    "answer": "Row-Level Security (RLS) is enabled on all tables with FORCE option. Application code sets the current_setting('app.tenant_id') per request, and RLS policies use this setting to filter all queries automatically.",
+    "contexts": ["PostgreSQL multi-tenancy uses ALTER TABLE ... ENABLE ROW LEVEL SECURITY and CREATE POLICY statements that reference current_setting('app.tenant_id', true). The non-superuser role rag_app cannot bypass RLS, ensuring complete isolation."],
+    "ground_truth": "PostgreSQL RLS with app.tenant_id setting enforces tenant isolation at the DB level."
+  },
+  {
+    "question": "What metrics does the /admin/stats endpoint return?",
+    "answer": "The admin stats endpoint returns total documents, chunks by modality breakdown, cache hit rate over the last 24 hours, and LLM cost in USD for today. Only admin and editor roles can access this endpoint.",
+    "contexts": ["GET /admin/stats requires admin or editor role. It returns: total_documents (count from DB), chunks_by_modality (ES aggregation by modality field), cache_hit_rate_24h (Redis counter ratio), and llm_cost_today (sum from query_history)."],
+    "ground_truth": "Admin stats: total_documents, chunks_by_modality, cache_hit_rate_24h, llm_cost_today."
+  }
+]

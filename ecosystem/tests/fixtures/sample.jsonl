@@ -1,0 +1,5 @@
+{"id": 1, "query": "What is RAG?", "answer": "RAG stands for Retrieval-Augmented Generation, a technique that combines a retrieval system with a language model.", "score": 0.95}
+{"id": 2, "query": "How do vector embeddings work?", "answer": "Vector embeddings map text to dense numerical representations in high-dimensional space, where semantic similarity corresponds to geometric proximity.", "score": 0.88}
+{"id": 3, "query": "What is chunking in NLP?", "answer": "Chunking is the process of splitting long documents into smaller, semantically meaningful segments suitable for embedding and retrieval.", "score": 0.91}
+{"id": 4, "query": "Name a vector database.", "answer": "Qdrant is a high-performance vector database optimized for similarity search at scale.", "score": 0.97}
+{"id": 5, "query": "What is semantic search?", "answer": "Semantic search understands the meaning and context of queries rather than matching keywords, enabling more accurate information retrieval.", "score": 0.93}

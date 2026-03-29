@@ -1,0 +1,11 @@
+id,name,department,salary,hire_date,city,country
+1,Alice Johnson,Engineering,95000,2019-03-15,San Francisco,USA
+2,Bob Martinez,Marketing,72000,2020-07-01,New York,USA
+3,Carol Smith,Engineering,105000,2018-11-20,Austin,USA
+4,David Lee,Product,88000,2021-01-10,Seattle,USA
+5,Emma Wilson,Design,79000,2020-04-22,Los Angeles,USA
+6,Frank Brown,Engineering,115000,2017-08-30,San Francisco,USA
+7,Grace Kim,Marketing,68000,2022-02-14,Chicago,USA
+8,Henry Davis,Product,92000,2019-09-05,New York,USA
+9,Isabella Moore,Design,83000,2021-06-18,Austin,USA
+10,Jack Taylor,Engineering,99000,2020-12-01,Seattle,USA

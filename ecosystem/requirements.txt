@@ -1,0 +1,37 @@
+# ── Already in venv ────────────────────────────────────────────────────────────
+pydantic>=2.0
+python-dotenv
+redis>=4.0
+boto3
+qdrant-client
+neo4j
+psycopg2-binary
+numpy
+httpx
+pika
+
+# ── Core (install now) ─────────────────────────────────────────────────────────
+celery[redis]>=5.3
+kombu>=5.3
+anthropic>=0.40
+google-generativeai>=0.8
+tiktoken
+pandas>=2.0
+polars>=0.20
+openpyxl
+Pillow>=10.0
+piexif
+firecrawl-py
+aiofiles
+
+# ── Testing ────────────────────────────────────────────────────────────────────
+pytest>=8.0
+pytest-asyncio>=0.23
+tabulate  # for pandas .to_markdown()
+
+# ── Optional heavy deps (install separately as needed) ─────────────────────────
+# unstructured[pdf,docx,html]   — document parsing (large install)
+# faster-whisper                — audio transcription
+# pyannote.audio>=3.0           — speaker diarization (requires HF token)
+# spacy                         — NER  (+ python -m spacy download en_core_web_sm)
+# python-magic-bin              — MIME type detection (Windows)
