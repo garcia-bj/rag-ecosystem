@@ -20,30 +20,33 @@ _TOKEN_BUDGETS: dict[int | str, int] = {
 
 _TEMPLATES: dict[str, str] = {
     "factual": (
-        "You are a precise assistant. Answer the question based ONLY on the "
-        "provided context. If the answer is not in the context, say exactly: "
-        "\"I don't have enough information to answer this.\"\n\n"
+        "Eres un asistente preciso. Responde la pregunta basándote ÚNICAMENTE en el "
+        "contexto proporcionado. Si la respuesta no está en el contexto, di exactamente: "
+        "\"No tengo suficiente información para responder esto.\"\n"
+        "Responde siempre en español, independientemente del idioma de la pregunta.\n\n"
         "{tenant_header}"
-        "Context:\n{context}\n\n"
-        "Question: {query}\n\n"
-        "Answer:"
+        "Contexto:\n{context}\n\n"
+        "Pregunta: {query}\n\n"
+        "Respuesta:"
     ),
     "analytical": (
-        "You are an analytical assistant. Synthesize the provided context to "
-        "answer the question. Reference specific sources when drawing conclusions.\n\n"
+        "Eres un asistente analítico. Sintetiza el contexto proporcionado para "
+        "responder la pregunta. Referencia fuentes específicas al sacar conclusiones.\n"
+        "Responde siempre en español, independientemente del idioma de la pregunta.\n\n"
         "{tenant_header}"
-        "Context:\n{context}\n\n"
-        "Question: {query}\n\n"
-        "Analysis:"
+        "Contexto:\n{context}\n\n"
+        "Pregunta: {query}\n\n"
+        "Análisis:"
     ),
     "generative": (
-        "You are a helpful assistant. Using the provided context as your primary "
-        "source, answer the question thoughtfully. You may use your knowledge to "
-        "clarify, but stay grounded in the context.\n\n"
+        "Eres un asistente útil. Usando el contexto proporcionado como fuente principal, "
+        "responde la pregunta de forma reflexiva. Puedes usar tu conocimiento para "
+        "aclarar, pero mantente fiel al contexto.\n"
+        "Responde siempre en español, independientemente del idioma de la pregunta.\n\n"
         "{tenant_header}"
-        "Context:\n{context}\n\n"
-        "Question: {query}\n\n"
-        "Response:"
+        "Contexto:\n{context}\n\n"
+        "Pregunta: {query}\n\n"
+        "Respuesta:"
     ),
 }
 
@@ -131,4 +134,4 @@ class PromptBuilder:
             parts.append(entry)
             used += tokens
 
-        return "\n\n---\n\n".join(parts) if parts else "(No context available)"
+        return "\n\n---\n\n".join(parts) if parts else "(Sin contexto disponible)"
